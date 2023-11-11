@@ -1,6 +1,7 @@
 package org.example.config;
 
 import org.example.props.PropertyReader;
+import org.flywaydb.core.Flyway;
 
 import java.sql.*;
 
@@ -12,6 +13,7 @@ public class H2Db {
 
         try{
             connection = DriverManager.getConnection(databaseURL);
+            flywayMigration(databaseURL);
         } catch (SQLException e){
             e.fillInStackTrace();
         }
@@ -59,5 +61,10 @@ public class H2Db {
         } catch (SQLException e){
             throw new RuntimeException("Something went wrong!");
         }
+    }
+
+    private void flywayMigration(String url){
+        Flyway flyway = Flyway.configure().dataSource(url, "", "").load();
+        flyway.migrate();
     }
 }
